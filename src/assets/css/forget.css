@@ -1,0 +1,432 @@
+@charset "utf-8";
+
+/* CSS Document */
+
+.wrap {
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 20px 24px;
+    box-sizing: border-box;
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+.logo {
+    text-align: left;
+}
+
+.content {
+    width: 1053px;
+    height: 752px;
+    margin: 0 auto;
+    background: #fff;
+    margin-top: 52px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 21px 8px rgba(208, 208, 208, 0.35);
+}
+
+.lock {
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.lock img {
+    width: 89px;
+}
+
+.cnt_left {
+    float: left;
+    width: 244px;
+    height: 752px;
+    background: #E2E2E2;
+}
+
+.cnt_right {
+    float: left;
+    width: 809px;
+    padding-left: 31px;
+    padding-right: 41px;
+    box-sizing: border-box;
+    padding-top: 42px;
+}
+
+.axis {
+    padding-left: 81px;
+}
+
+.axis li {
+    position: relative;
+    height: 63px;
+}
+
+.sline {
+    width: 2px;
+    height: 63px;
+    border-radius: 1px;
+    background: #c5c5c5;
+}
+
+.circle {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 21px;
+    left: -8px;
+}
+
+.big_c {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #c5c5c5;
+    border-radius: 100%;
+    box-sizing: border-box;
+}
+
+.small_c {
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    margin: 3px;
+    background: #c5c5c5;
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 16px;
+    color: #999;
+    line-height: 63px;
+    position: absolute;
+    top: 0;
+    left: 18px;
+}
+
+.visited .big_c,
+.visited .title {
+    color: #607EFF;
+    border-color: #607EFF;
+}
+
+.visited .sline,
+.visited .small_c {
+    background: #607EFF;
+}
+
+.h1_title {
+    position: relative;
+}
+
+.font h1 {
+    font-size: 26px;
+    color: #777;
+    text-align: left;
+}
+
+.title_line {
+    height: 1px;
+    background: #c9c9c9;
+    margin-top: 9px;
+    position: relative;
+}
+
+.red_line {
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: #E93429;
+    position: absolute;
+    top: -2px;
+}
+
+.blue_line {
+    width: 14px;
+    height: 5px;
+    border-radius: 3px;
+    background: #1D2089;
+    position: absolute;
+    top: -2px;
+    left: 50px;
+}
+
+.slogan {
+    position: absolute;
+    top: -25px;
+    right: -23px;
+}
+
+.goback {
+    font-size: 14px;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    cursor: pointer;
+}
+
+.goback a {
+    color: #607EFF;
+}
+
+.goback span {
+    color: #555;
+    margin-left: 8px;
+}
+
+.goback b {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.form {
+    padding-top: 160px;
+}
+
+.form dl {
+    margin-bottom: 20px;
+    padding-left: 70px;
+    height: 55px;
+}
+
+.form dd,
+.form dt {
+    float: left;
+    text-align: left;
+}
+
+.form dd {
+    width: 70%;
+    position: relative;
+}
+
+.form dt {
+    width: 12%;
+    text-align: right;
+    margin-right: 44px;
+    line-height: 55px;
+    color: #607EFF;
+}
+
+.inpt_wrap {
+    width: 300px;
+    background: #fff;
+    box-shadow: 0px 6px 16px 2px rgba(208, 208, 208, 0.35);
+    height: 55px;
+}
+
+.inpt_wrap input {
+    width: 300px;
+    height: 55px;
+    line-height: 55px;
+    border: none;
+    box-sizing: border-box;
+    padding: 0 15px;
+}
+
+.yzm {
+    width: 146px;
+    float: left;
+}
+
+.yzm input {
+    width: 146px;
+}
+
+.yzm_btn {
+    float: left;
+    cursor: pointer;
+    padding-top: 8px;
+    padding-left: 10px;
+}
+
+.yzm_btn span {
+    display: inline-block;
+    color: #fff;
+    background: #607eff;
+    border-radius: 20px;
+    padding: 11px 20px;
+    user-select: none;
+}
+
+.yzm_btn span[disabled] {
+    color: #fff;
+    background: #BCBCBC;
+    pointer-events: none;
+    cursor: inherit;
+}
+
+.slide {
+    width: 300px;
+}
+
+.login_btn_wrap,
+.reg_btn_wrap {
+    width: 297px;
+    margin-top: 25px;
+    text-align: left;
+}
+
+.login_btn {
+    display: inline-block;
+    width: 246px;
+    height: 48px;
+    background: rgba(96, 126, 255, 1);
+    box-shadow: 0px 6px 16px 2px rgba(208, 208, 208, 0.35);
+    border-radius: 6px;
+    color: #fff;
+    line-height: 48px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 75px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.reg_ts {
+    font-size: 12px;
+    color: red;
+    position: absolute;
+    background: #cbcbcb;
+    display: inline-block;
+    padding: 4px 8px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    right: 25%;
+    bottom: -12px;
+}
+
+.yzm_ts {
+    right: 60%;
+}
+
+.reg_ts img {
+    width: 13px;
+    height: 13px;
+    vertical-align: -2px;
+    margin-right: 8px;
+}
+
+.prepage {
+    font-size: 14px;
+    width: 246px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.prepage span {
+    cursor: pointer;
+    opacity: 0.6
+}
+
+.prepage span:hover {
+    color: #607EFF;
+}
+
+.success {
+    width: 246px;
+    text-align: center;
+}
+
+.success p {
+    opacity: 0.8
+}
+
+@media screen and (max-width:1366px) {
+    .content {
+        width: 749px;
+        height: 535px;
+        margin-top: 37px;
+        border-radius: 6px;
+        box-shadow: 0px 4px 15px 6px rgba(208, 208, 208, 0.35)
+    }
+    .lock {
+        padding-top: 36px;
+        padding-bottom: 55px;
+    }
+    .lock img {
+        width: 63px;
+    }
+    .cnt_left {
+        float: left;
+        width: 174px;
+        height: 535px;
+        background: #E2E2E2;
+    }
+    .cnt_right {
+        float: left;
+        width: 575px;
+    }
+    .axis {
+        padding-left: 43px;
+    }
+    .form {
+        padding-top: 90px;
+    }
+    .form dl {
+        padding-left: 40px;
+        height: 39px;
+    }
+    .form dt {
+        width: 18%;
+        margin-right: 34px;
+        line-height: 39px;
+    }
+    .inpt_wrap {
+        width: 215px;
+        background: #fff;
+        box-shadow: 0px 4px 12px 1px rgba(208, 208, 208, 0.35);
+        height: 39px;
+    }
+    .inpt_wrap input {
+        width: 215px;
+        height: 39px;
+        line-height: 39px;
+        padding: 0 10px;
+    }
+    .yzm {
+        width: 104px;
+    }
+    .yzm input {
+        width: 104px;
+    }
+    .yzm_btn {
+        padding-top: 4px;
+        padding-left: 10px;
+    }
+    .yzm_btn span {
+        display: inline-block;
+        color: #fff;
+        background: #607eff;
+        border-radius: 20px;
+        padding: 6px 15px;
+    }
+    .slide {
+        width: 215px;
+    }
+    .login_btn {
+        width: 175px;
+        height: 34px;
+        background: rgba(96, 126, 255, 1);
+        box-shadow: 0px 4px 12px 1px rgba(208, 208, 208, 0.35);
+        border-radius: 4px;
+        line-height: 34px;
+    }
+    .prepage {
+        width: 175px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    .success {
+        width: 175px;
+    }
+}
+
+@media screen and (min-width:1920px) {
+    .wrap {
+        width: 100%;
+        margin: 0 auto;
+    }
+}
