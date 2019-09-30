@@ -67,6 +67,53 @@ export default new Router({
                 import ('./views/user/agreement.vue'),
         },
         {
+            path: '/user/lookpdf',
+            name: 'lookpdf',
+            meta: {
+                requireAuth: true,
+                title: "查看协议",
+            },
+            component: () =>
+                import ('./views/user/lookpdf.vue'),
+        },
+        {
+            path: '/user/help',
+            name: 'help',
+            meta: {
+                requireAuth: true,
+                title: "帮助中心",
+            },
+            redirect: "/user/help/timestamp",
+            component: () =>
+                import ('./views/user/help.vue'),
+            children: [{
+                    path: '/user/help/timestamp',
+                    name: 'timestamp',
+                    component: () =>
+                        import ('./views/user/help/timestamp.vue')
+                },
+                {
+                    path: '/user/help/forensics',
+                    name: 'forensics',
+                    component: () =>
+                        import ('./views/user/help/forensics.vue')
+                },
+                {
+                    path: '/user/help/onesign',
+                    name: 'onesign',
+                    component: () =>
+                        import ('./views/user/help/onesign.vue')
+                },
+                {
+                    path: '/user/help/forensics',
+                    name: 'forensics',
+                    component: () =>
+                        import ('./views/user/help/forensics.vue')
+                },
+
+            ]
+        },
+        {
             path: '/login/index',
             name: 'loginindex',
             meta: {
@@ -230,6 +277,24 @@ export default new Router({
                     redirect: 'regPhone'
                 }
             ]
+        },
+        {
+            path: '/agreedoc/privacy',
+            name: 'privacy',
+            meta: {
+                title: "隐私保护协议",
+            },
+            component: () =>
+                import ('./views/agreedoc/privacy.vue')
+        },
+        {
+            path: '/agreedoc/regdoc',
+            name: 'regdoc',
+            meta: {
+                title: "用户注册与使用协议",
+            },
+            component: () =>
+                import ('./views/agreedoc/regdoc.vue')
         },
     ]
 })

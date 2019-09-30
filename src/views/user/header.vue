@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="logo">
-            <span class="logo_pic"><img src="../../assets/images/logo2.png" alt=""></span>
+            <span class="logo_pic" @click="logo()"><img src="../../assets/images/logo2.png" alt=""></span>
             <strong>实名认证</strong>
         </div>
         <div class="header-nav">
@@ -84,7 +84,7 @@ export default {
                         that.$router.push({name:"agreement"})
                         break;
                     case 4:
-                        that.$router.push({name:"papers"})
+                        that.$router.push({name:"help"})
                         break;
                 }
         },
@@ -93,6 +93,9 @@ export default {
         },
         leave(){
             this.cur=null;
+        },
+        logo(){
+            this.$router.push({name:"loginindex"})
         }
     },
     
@@ -121,6 +124,7 @@ export default {
     width: 132px;
     height: 40px;
     margin-right: 27px;
+    cursor: pointer;
 }
 .header strong{
     display: inline-block;

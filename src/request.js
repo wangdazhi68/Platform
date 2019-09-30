@@ -13,7 +13,7 @@ const service = axios.create({
         //     return qs.stringify(data);
         // }],
         headers: {
-            'token': '',
+            //'token': '',
             //'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
             'content-type': "application/json;charset=UTF-8"
         }
@@ -42,7 +42,7 @@ service.interceptors.response.use(
                 localStorage.removeItem('userinfo')
                 router.replace({
                     path: '/login/login',
-                    query: { rediect: router.currentRoute.fullPath }
+                    query: { redirect: router.currentRoute.fullPath }
                 })
             }
         }

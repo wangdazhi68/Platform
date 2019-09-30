@@ -9,7 +9,6 @@ Vue.config.productionTip = false
 import layer from 'vue-layer'
 import animated from 'animate.css'
 import 'vue-layer/lib/vue-layer.css';
-//import 'element-ui/lib/theme-chalk/index.css';
 import ElementUI from 'element-ui';
 import './plugins/element.js'
 import $ from 'jquery'
@@ -17,6 +16,7 @@ Vue.prototype.$ = $;
 Vue.prototype.$layer = layer(Vue);
 Vue.prototype.$http = 'http://192.168.50.194:8080/';
 Vue.prototype.$baseURL = 'http://192.168.50.144:8080/'
+Vue.prototype.client_secret = 'client_secret'
 Vue.use(animated)
 Vue.use(ElementUI);
 
@@ -82,13 +82,19 @@ router.beforeEach((to, from, next) => {
         } else {
             next({
                 path: '/login/login',
-                query: { rediect: to.fullPath }
+                query: { redirect: to.fullPath }
             })
+        }
+    } else {
+        if (Vue.prototype.$getlocalStorage('userinfo')) {
+            if (to.path !== '/login/login') {
+                next()
+            } else {
+                next({ path: "/login/index" })
+            }
         }
     }
     next()
-
-
 })
 
 

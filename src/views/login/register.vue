@@ -417,6 +417,9 @@ input:-webkit-autofill {
         width: 230px;
         margin-bottom: 15px;
     }
+    label a{
+        cursor: pointer;
+    }
 }
 
 @media screen and (min-width: 1920px) {

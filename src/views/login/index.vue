@@ -14,12 +14,14 @@
                         <ul> 
                             <li @click="$router.push({name:'userindex'})"><i></i><span>用户中心</span><i></i></li>
                             <li><i></i><span>问题与建议</span><i></i></li>
-                            <li><i></i><span>退出账号</span><i></i></li>
+                            <li @click="layout()"><i></i><span>退出账号</span><i></i></li>
                         </ul>
                     </div>
                 </div>
+                <b @click="gohelp()">
                 <img class="helpico" src="../../assets/images/user/helpicon.png" alt="">
                 <span class="user_phone">帮助</span>
+                </b>
             </div>
         </div>
         <div class="content">
@@ -77,7 +79,26 @@ export default {
 	    this.loginCode=localdata.loginCode
 	},
     methods:{
-
+        layout(){
+            this.$store.commit('setuserinfo', '')
+            localStorage.removeItem('userinfo')
+            this.$router.replace({name:"login"})
+            var that=this;
+            that.$request({
+                method:'get',
+                headers:{
+                    'content-type': "application/json;charset=UTF-8"
+                },
+                url:'/login/logout',
+            }).then((res) => {
+                return true
+            }).catch((err) => {
+                console.log(err);
+            })
+        },
+        gohelp(){
+            this.$router.push({name:"help"})
+        }
     },
     
 }

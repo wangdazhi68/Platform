@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="logo">
-            <span class="logo_pic"><img src="../../assets/images/logo2.png" alt=""></span>
+            <span class="logo_pic" @click="logo()"><img src="../../assets/images/logo2.png" alt=""></span>
             <strong>实名认证</strong>
         </div>
         <div class="user">
@@ -43,6 +43,9 @@ export default {
             }).catch((err) => {
                 console.log(err);
             })
+        },
+        logo(){
+            this.$router.push({name:"loginindex"})
         }
     },
     
@@ -71,6 +74,7 @@ export default {
     width: 132px;
     height: 40px;
     margin-right: 27px;
+    cursor: pointer;
 }
 .header strong{
     display: inline-block;

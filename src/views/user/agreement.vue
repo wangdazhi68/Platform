@@ -2,7 +2,7 @@
     <div class="wrap">
         <el-container>
             <el-header height="80px">
-                <userheader active="2"></userheader>
+                <userheader active="3"></userheader>
             </el-header>
             <el-container>
                 <el-aside width="250px">
@@ -80,7 +80,7 @@
                                     label="操作"
                                     width="130">
                                     <template slot-scope="scope">
-                                        <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                                        <el-button @click="lookpdf(scope.row)" type="text" size="small">查看</el-button>
                                         <b class="sline">|</b>
                                         <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
                                     </template>
@@ -195,6 +195,9 @@ export default {
         },
         download(e){
             window.open(this.$baseURL+"/index/download?id="+e.id,'_blank');  
+        },
+        lookpdf(e){
+            window.open(this.$http+"user/lookpdf?id="+e.id,'_blank'); 
         }
     }
 };

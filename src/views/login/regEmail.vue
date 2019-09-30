@@ -43,7 +43,8 @@
                     <img v-show="!checked" src="@/assets/images/check.png" alt="">
                     <img  v-show="checked" src="@/assets/images/check_v.png" alt="">
                     <span>
-                        我已同意相关 <a href="#">注册协议</a> 以及 <a href="#">保密协议</a>
+                        我已同意相关 <a @click="regdoc()">用户注册与使用协议</a> 以及<br> 
+                        <a @click="privacy()">&nbsp;&nbsp;&nbsp;&nbsp;隐私保护协议</a>
                     </span>
                 </label>
             </div>
@@ -63,6 +64,7 @@
 <script>
 import SlideValidation from '@/components/SlideValidation.vue'
 var interval = null;
+import {getSign} from '@/assets/js/sign';
 import { hexMD5 } from '@/assets/js/md5';
 import qs from 'qs'
 export default {
@@ -131,14 +133,26 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.loginName,
+                "loginType":"2",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.loginName,
+                    "loginType":"2",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
+
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.loginName,
-                    loginType:2
-                },
+                data:json,
                 headers:{
-                    //'Content-Type': 'multipart/form-data'
                     'content-type': "application/json;charset=UTF-8"
                 },
                 url:'/register/sendValidateCode',
@@ -239,6 +253,12 @@ export default {
         },
         gologin(){
             window.location.href = this.$http+'login/login'
+        },
+        regdoc(){
+            window.open(this.$http+"agreedoc/regdoc",'_blank')
+        },
+        privacy(){
+            window.open(this.$http+"agreedoc/privacy",'_blank')
         }
     },
 

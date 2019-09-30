@@ -132,25 +132,24 @@ export default {
                 },
                 url:'/login/signOn',
             }).then((res) => {
-                console.log(JSON.stringify(res.data.data));
                 if(res.data.code==0){
 					that.$store.commit('setuserinfo',res.data.data);
 					that.$setlocalStorage('userinfo',res.data.data)
 					that.$layer.msg('登录成功',{shade: true,time: 3})
-					console.log(that.$route.query.redirect);
+					//console.log(that.$route.query.redirect);
 					if(that.$route.query.redirect){
-						console.log('aaa')
 						setTimeout(function(){
-							that.$router.replace({path:that.$route.query.rediect})
+							that.$router.replace({path:that.$route.query.redirect})
 						},3000);
 					}else{
-						console.log('bbb')
 						setTimeout(function(){
 							that.$router.push({name:"loginindex"})
 						},3000);
 					}
                     
-                }else{
+                }else if(res.data.code==-200){
+					that.$layer.msg('您的账号已冻结，请联系客服人员',{shade: true,time: 3})
+				}else{
                     this.passerror="您的密码填写有误";
                 }
 
