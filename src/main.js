@@ -11,13 +11,13 @@ import animated from 'animate.css'
 import 'vue-layer/lib/vue-layer.css';
 import ElementUI from 'element-ui';
 import './plugins/element.js'
-import $ from 'jquery'
+import $ from 'jquery' 
 Vue.prototype.$ = $;
 Vue.prototype.$layer = layer(Vue);
-Vue.prototype.$http = 'http://192.168.50.194:8080/';
-Vue.prototype.$baseURL = 'http://192.168.50.144:8080/'
+Vue.prototype.$http = process.env.VUE_APP_BASEURL+'/';
+Vue.prototype.$baseURL = process.env.VUE_APP_APIURL + '/'
 Vue.prototype.client_secret = 'client_secret'
-Vue.use(animated)
+Vue.use(animated);
 Vue.use(ElementUI);
 
 
@@ -70,7 +70,30 @@ router.beforeEach((to, from, next) => {
     // }
     //带token开发
     if (to.meta.requireAuth) {
-        if (Vue.prototype.$getlocalStorage('userinfo')) {
+        //http://192.168.50.193:8080/user/index?token=72d28655-ff7a-493f-96d7-862ea04de5ab
+        if(to.query.token){
+            request({
+                method:'get',
+                headers:{
+                    'content-type': "application/json;charset=UTF-8",
+                    'token':to.query.token
+                },
+                url:'/login/detail',
+            }).then((res) => {
+                console.log(res)
+                if(res.data.code==0){
+                    let sessionId=to.query.token;
+                    res.data.data.sessionId=sessionId;
+                    Vue.prototype.$setlocalStorage('userinfo',res.data.data)
+                    next()
+                }
+                
+            }).catch((err) => {
+                console.log(err);
+            })
+
+        }
+        else if (Vue.prototype.$getlocalStorage('userinfo')) {
             if (to.meta.status) {
                 if (!store.state.status) {
                     next({

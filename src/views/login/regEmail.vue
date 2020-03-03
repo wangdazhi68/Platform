@@ -31,10 +31,10 @@
                 </div>
             </div>
             <div class="account">
-                <p class="reg_ts"><img src="../../assets/images/erroricon.png" alt="">推荐码不存在</p>
+                <!-- <p class="reg_ts"><img src="../../assets/images/erroricon.png" alt="">推荐码不存在</p> -->
                 <div class="ipt_bg">
                     <img src="../../assets/images/yqicon.png" alt="">
-                    <input type="text" placeholder="请填写推荐码（选填）">
+                    <input type="text" v-model="code" v-on:input="search" placeholder="推荐码（选填）">
                 </div>
             </div>
             <div class="xieyi">
@@ -42,11 +42,11 @@
                 <label for="check">
                     <img v-show="!checked" src="@/assets/images/check.png" alt="">
                     <img  v-show="checked" src="@/assets/images/check_v.png" alt="">
-                    <span>
-                        我已同意相关 <a @click="regdoc()">用户注册与使用协议</a> 以及<br> 
-                        <a @click="privacy()">&nbsp;&nbsp;&nbsp;&nbsp;隐私保护协议</a>
-                    </span>
                 </label>
+                <span>
+                    我已同意相关 <a @click="regdoc()">用户注册与使用协议</a> 以及<br> 
+                    <a @click="privacy()">&nbsp;&nbsp;&nbsp;&nbsp;隐私保护协议</a>
+                </span> 
             </div>
             <div class="login_btn_wrap">
                 <span class="login_btn" @click="reg()" :logindisabled='logindisabled'>注册</span>
@@ -89,12 +89,25 @@ export default {
             passerror:null,
             slide:false,
             logindisabled:true,
+            bkeyNo:null,
+            code:null
         }
+    },
+    created(){
+        if(this.$route.query.code){
+			this.code=this.$route.query.code;
+        };
+        if(this.$route.query.bkeyNo){
+			this.bkeyNo=this.$route.query.bkeyNo;
+		}
     },
     mounted() {
 
     },
     methods: {
+        search(){
+            console.log(this.code)
+        },
         async getVerificationCode(){
             var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
             if(reg.test(this.loginName)){ 
@@ -165,7 +178,7 @@ export default {
                     this.loginNameerror='账户已存在'
                     return false
                 }
-                this.sucyzm=res.data.data.code;
+                //this.sucyzm=res.data.data.code;
             }).catch((err) => {
                 console.log(err);
             })
@@ -207,10 +220,10 @@ export default {
                 return false  
             }
 
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
+            if(this.yzm.trim().length>0){
                 this.yzmerror=null;     
             }else{
-                this.yzmerror='验证码错误'
+                this.yzmerror='验证码不能为空'
                 return false
             }
             let passreg = /^(?=.*?[0-9])(?=.*?[a-zA-Z])[0-9a-zA-Z]{8,}$/
@@ -225,14 +238,24 @@ export default {
             if(this.slide && this.checked){
                 this.logindisabled=false;
             }
+            var postdata={
+                loginName:this.loginName,
+                loginType:2,
+                password:this.password,
+                bkeyNo:this.bkeyNo,
+                code:this.code,
+                verifyCode:this.yzm,
+            } 
+            if(!this.bkeyNo){
+                delete postdata.bkeyNo;
+            }
+            if(!this.code){
+                delete postdata.code;
+            }
             let that=this;
             this.$request({
                 method:'post',
-                data:{
-                    loginName:that.loginName,
-                    loginType:2,
-                    password:that.password
-                },
+                data:postdata,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },

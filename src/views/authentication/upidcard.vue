@@ -102,7 +102,7 @@ export default {
         }
     },
     created(){
-        let localdata=JSON.parse(localStorage.getItem('userinfo'))
+        let localdata=this.$getlocalStorage('userinfo')
         this.customerId=localdata.customerId 
         this.srccode=this.$baseURL+"personal/twoDimensionalCode?width=150&height=150&customerId="+this.customerId
     },

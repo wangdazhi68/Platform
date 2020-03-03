@@ -107,14 +107,14 @@ export default {
 		login(){
 			var that=this;
 			var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
-			reg.test(this.username)
+			//reg.test(this.username)
 			if(!(/^1[3456789]\d{9}$/.test(this.username)) && !reg.test(this.username)){ 
                 this.nameerror='账户为邮箱或手机号'
                 return false
             } else{
                 this.nameerror=null;
 			}
-			let passreg = /^(?=.*?[0-9])(?=.*?[a-z])[0-9a-z]{8,}$/
+			let passreg = /^[\w]{6,20}$/;
             let password=passreg.test(this.password)
 			if(!password){
 				this.passerror='密码格式错误';
@@ -132,6 +132,7 @@ export default {
                 },
                 url:'/login/signOn',
             }).then((res) => {
+				console.log(res)
                 if(res.data.code==0){
 					that.$store.commit('setuserinfo',res.data.data);
 					that.$setlocalStorage('userinfo',res.data.data)

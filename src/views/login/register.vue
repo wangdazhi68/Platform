@@ -294,6 +294,7 @@ input:-webkit-autofill {
 }
 .xieyi a {
     color: #607eff !important;
+    cursor: pointer;
 }
 
 
@@ -307,8 +308,8 @@ input:-webkit-autofill {
 @media screen and (max-width: 1366px) {
     .content {
         width: 749px;
-        height: 535px;
-        margin-top: 37px;
+        height: 570px;
+        margin-top: 17px;
         border-radius: 6px;
         box-shadow: 0px 4px 15px 6px rgba(208, 208, 208, 0.35);
     }
@@ -318,7 +319,8 @@ input:-webkit-autofill {
     }
     .cnt_bg {
         width: 398px;
-        height: 535px;
+        height: 570px;
+        background-size:100% 100%; 
     }
     .cnt {
         float: left;

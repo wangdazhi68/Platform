@@ -6,7 +6,7 @@ import router from './router';
 // 创建axios实例
 const service = axios.create({
         //baseURL: 'http://47.92.138.255:8081/guns-rest/',
-        baseURL: 'http://192.168.50.144:8080',
+        baseURL: process.env.VUE_APP_APIURL,
         timeout: 10000, // 请求超时时间
         //data:data,
         // transformRequest: [function (data) {
@@ -22,10 +22,18 @@ const service = axios.create({
     // request拦截器
 service.interceptors.request.use(
     config => {
+        //console.log(config)
         let localdata = Vue.prototype.$getlocalStorage('userinfo')
-        if (localdata) {
-            config.headers.token = localdata.sessionId;
+        if (config.url == "/register/sendValidateCode") {
+            console.log('不需要加token')
+        }else if(config.url == "/register/getVerifyCode"){
+            console.log('不需要加token2')
+        } else {
+            if (localdata) {
+                config.headers.token = localdata.sessionId;
+            }
         }
+
         return config
     },
     error => {

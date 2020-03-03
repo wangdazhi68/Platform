@@ -123,7 +123,7 @@ export default {
     	}
     },
     mounted() {
-        console.log(this.loginName)
+        //console.log(this.loginName)
         if(!this.$route.params.loginName){
             this.$router.replace('one');
         }
@@ -159,7 +159,7 @@ export default {
                 },
                 url:'/register/resetPassword',
             }).then((res) => {
-                console.log(res);
+                //console.log(res);
                 if(res.data.code==0){
                     this.$router.push({
                         name:"three",

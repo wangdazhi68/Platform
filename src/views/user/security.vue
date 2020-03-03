@@ -88,7 +88,7 @@
                     <p>为确保是您本人操作，请进行身份验证。</p>
                     <p>{{userdata.source=='mobile'?userdata.mobile:userdata.email}}</p>
                     <el-input class="my-elinput" v-model="phoneyzm.yzm" autocomplete="off" placeholder="请输入验证码"></el-input>
-                    <span class="yzm" :disabled='disabled' @click="getVerificationCode('phone',1)">{{yzmtext}}</span>
+                    <span class="yzm" :disabled='disabled' @click="getVerificationCode()">{{yzmtext}}</span>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -121,7 +121,9 @@
 </template>
 <script>
 import userheader from "./header.vue";
+import {getSign} from '@/assets/js/sign';
 import { hexMD5 } from '@/assets/js/md5';
+
 var interval = null;
 export default {
     components: {
@@ -144,14 +146,10 @@ export default {
             }
         };
         var validateyzm = (rule, value, callback) => {
-            console.log(this.sucyzm)
-            if (value === '') {
-                callback(new Error('请输入验证码'));
-            } 
-            if(value==this.sucyzm && value.length>0){
+            if(value.trim().length>0){
                 callback();
             }else{
-                callback(new Error('验证码错误'));
+                callback(new Error('请输入验证码'));
             }
             callback();
         };
@@ -214,12 +212,23 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.userdata.source=='mobile'?this.userdata.mobile:this.userdata.email,
+                "loginType":this.userdata.source=='mobile'?"1":"2",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.userdata.source=='mobile'?this.userdata.mobile:this.userdata.email,
+                    "loginType":this.userdata.source=='mobile'?"1":"2",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.userdata.mobile,
-                    loginType:this.userdata.source=='mobile'?1:2, 
-                },
+                data:json,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },
@@ -230,7 +239,7 @@ export default {
                     alert('请求失败')
                     return false
                 }
-                this.sucyzm=res.data.data.code;
+                //this.sucyzm=res.data.data.code;
             }).catch((err) => {
                 console.log(err);
             })
@@ -301,17 +310,49 @@ export default {
             })
         },
         subyzm(phoneyzm){
+            let that=this;
             this.$refs[phoneyzm].validate((valid) => {
                 if (valid) {
-                    this.yzmtext="获取验证码";
-                    this.disabled=false;
-                    this.currentTime=61;
-                    this.sucyzm='';
-                    this.dialogphone = false,
-                    this.dialogout=true,
-                    
-                    clearInterval(interval);
-                    this.$refs[phoneyzm].resetFields();
+                    // 调用判断验证码是否正确接口
+                    var date = new Date();
+                    var timestamp = date.getTime();
+                    var res = {
+                        "timestamp": timestamp,
+                        "loginName":this.userdata.source=='mobile'?this.userdata.mobile:this.userdata.email,
+                        "verifyCode":this.phoneyzm.yzm
+                    }
+                    var signature=getSign(res);
+                    var json=JSON.stringify({
+                            "timestamp": timestamp,
+                            "loginName":this.userdata.source=='mobile'?this.userdata.mobile:this.userdata.email,
+                            "verifyCode":this.phoneyzm.yzm,
+                            "signature":signature.toUpperCase(),
+                            "timestamp":timestamp.toString()
+                        });
+                    that.$request({
+                        method:'post',
+                        headers:{
+                            'content-type': "application/json;charset=UTF-8"
+                        },
+                        data:json,
+                        url:'/register/getVerifyCode',
+                    }).then((res) => {
+                        console.log(res)
+                        if(res.data.code==0){
+                            this.dialogphone = false,
+                            clearInterval(interval);
+                            this.yzmtext="获取验证码";
+                            this.disabled=false;
+                            this.currentTime=61;
+                            this.dialogout=true,
+                            this.$refs[phoneyzm].resetFields();
+                        }else{
+                            this.sucyzm=false
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+
                 } else {
                     console.log('error submit!!');
                     return false;

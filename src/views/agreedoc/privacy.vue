@@ -74,6 +74,7 @@
     padding: 25px 20px;
     line-height: 30px;
     box-sizing: border-box;
+    text-align: left;
 }
 .bold {
     font-weight: bold;

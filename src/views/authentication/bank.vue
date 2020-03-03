@@ -108,6 +108,8 @@
 </template>
 <script>
 import Rzheader from "./header.vue";
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 var interval = null;
 import qs from "qs";
 export default {
@@ -145,12 +147,23 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.mobile,
+                "loginType":"1",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.mobile,
+                    "loginType":"1",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.mobile,
-                    loginType:1
-                },
+                data:json,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },
@@ -203,14 +216,14 @@ export default {
             }else{
                 this.bankerror=null
             }
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
-                this.yzmerror=null;    
-            }else{
-                this.yzmerror='验证码错误'
-                document.body.scrollTop= 200;
-	    	    document.documentElement.scrollTop = 200; 
-                return false
-            }
+            // if(this.yzm==this.sucyzm && this.yzm.length>0){
+            //     this.yzmerror=null;    
+            // }else{
+            //     this.yzmerror='验证码错误'
+            //     document.body.scrollTop= 200;
+	    	//     document.documentElement.scrollTop = 200; 
+            //     return false
+            // }
             let loading=this.$layer.loading({shade:true});
             let that=this;
             let data = qs.stringify({
@@ -237,6 +250,7 @@ export default {
                     that.$layer.msg(res.data.msg,{shade: true,time: 3})
                 }
             }).catch((err) => {
+                that.$layer.close(loading);
                 console.log(err);
             })
         },

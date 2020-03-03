@@ -146,6 +146,8 @@
 <script>
 import Rzheader from "./header.vue";
 import Upload from '@/components/upload.vue'
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 var interval = null;
 export default {
     components: {
@@ -227,12 +229,23 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.mobile,
+                "loginType":"1",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.mobile,
+                    "loginType":"1",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.mobile,
-                    loginType:1
-                },
+                data:json,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },
@@ -240,7 +253,7 @@ export default {
             }).then((res) => {
                 console.log(res);
                 if(res.data.code==-1){
-                    alert('请求失败')
+                    alert('请求验证码失败')
                     return false
                 }
                 this.sucyzm=res.data.data.code;
@@ -307,14 +320,17 @@ export default {
             }else{
                 this.iderror=null;
             }
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
-                this.yzmerror=null;    
-            }else{
-                this.yzmerror='验证码错误'
-                document.body.scrollTop= 200;
-	    	    document.documentElement.scrollTop = 200; 
-                return false
-            }
+
+
+
+            // if(this.yzm==this.sucyzm && this.yzm.length>0){
+            //     this.yzmerror=null;    
+            // }else{
+            //     this.yzmerror='验证码错误'
+            //     document.body.scrollTop= 200;
+	    	//     document.documentElement.scrollTop = 200; 
+            //     return false
+            // }
 
             if(!this.num[0]){
                 alert('请上传证件照正面照片')
@@ -350,6 +366,9 @@ export default {
                 console.log(res);
                 if(res.data.code==0){
                     that.subdetail(loading);
+                }else{
+                    that.$layer.msg(res.data.msg,{shade: true,time: 3})
+                    that.$layer.close(loading);
                 }
             }).catch((err) => {
                 console.log(err);

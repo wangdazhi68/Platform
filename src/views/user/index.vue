@@ -135,6 +135,13 @@
                                                     <div class="two" v-if="userdata.approveStatus=='0'">无</div>
                                                     <div class="gorz"></div>
                                                 </li>
+                                                <li>
+                                                    <div>认证手机号</div>
+                                                    <div class="two" v-if="userdata.approveStatus=='1'">{{userdata.certMobile}}</div>
+                                                    <div class="two" v-if="userdata.approveStatus=='2'">{{userdata.agentMobile}}</div>
+                                                    <div class="two" v-if="userdata.approveStatus=='0'">无</div>
+                                                    <div class="gorz"></div>
+                                                </li>
                                             </ul>
                                         </el-collapse-item>
                                     </el-collapse>

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 module.exports = {
-	publicPath: process.env.NODE_ENV === "production" ? "/dist/" : "/",
+    publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
+    outputDir: "dist",
     configureWebpack: {
 
         plugins: [
@@ -17,4 +18,4 @@ module.exports = {
 
         ]
     }
-}
+} 

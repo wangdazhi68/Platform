@@ -123,6 +123,8 @@
 import SlideValidation from "@/components/SlideValidation.vue";
 import qs from "qs";
 var interval = null;
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 export default {
     components: {
         SlideValidation
@@ -163,6 +165,7 @@ export default {
                     console.log(res);
                     if (res.data.code == 0) {
                         this.loginNameerror = "账户不存在";
+                        return false;
                     } else {
                         this.loginType = res.data.data.loginType;
                         this.loginNameerror = null;
@@ -178,12 +181,25 @@ export default {
             this.getCode();
             var that = this;
             that.disabled = true;
+
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.loginName,
+                "loginType":this.loginType,
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.loginName,
+                    "loginType":this.loginType,
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
+
             this.$request({
                 method: "post",
-                data: {
-                    loginName: this.loginName,
-                    loginType: this.loginType
-                },
+                data:json,
                 headers: {
                     //'Content-Type': 'multipart/form-data'
                     "content-type": "application/json;charset=UTF-8"
@@ -196,7 +212,7 @@ export default {
                         alert("请求失败");
                         return false;
                     }
-                    this.sucyzm = res.data.data.code;
+                    //this.sucyzm = res.data.data.code;
                 })
                 .catch(err => {
                     console.log(err);
@@ -222,18 +238,47 @@ export default {
                 this.slide = true;
             }
         },
-        next() {
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
-                this.yzmerror=null;     
-            }else{
-                this.yzmerror='验证码错误'
+        async next() {
+            let that=this;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.loginName,
+                "verifyCode":this.yzm,
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "timestamp": timestamp,
+                    "loginName":this.loginName,
+                    "verifyCode":this.yzm,
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
+            await that.$request({
+                method:'post',
+                headers:{
+                    'content-type': "application/json;charset=UTF-8"
+                },
+                data:json,
+                url:'/register/getVerifyCode',
+            }).then((res) => {
+                console.log(res)
+                if(res.data.code==0){
+                    that.yzmerror=null
+                }else{
+                    that.yzmerror='验证码错误'
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+            if(this.yzmerror){
                 return false
             }
             if(!this.slide){
                 this.$layer.msg('请先操作滑动验证',{time: 3})
                 return false
             }
-            var that=this;
             this.$router.push({name:"two",params:{
                 loginName:that.loginName
             }});

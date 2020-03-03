@@ -122,7 +122,7 @@
                     <p>为确保是您本人操作，请进行身份验证。</p>
                     <p>{{xinyzm.loginType==1?userdata.mobile:userdata.email}}</p>
                     <el-input class="my-elinput" v-model="jiuyzm.yzm1" autocomplete="off" placeholder="请输入验证码"></el-input>
-                    <span class="yzm" :disabled='disabled' @click="getVerificationCode('phone',1)">{{yzmtext}}</span>
+                    <span class="yzm" :disabled='disabled' @click="getVerificationCode(xinyzm.loginType==1?'phone':'email',1)">{{yzmtext}}</span>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -137,7 +137,7 @@
                 </el-form-item>
                 <el-form-item  prop="yzm1">
                     <el-input class="my-elinput" v-model="xinyzm.yzm1" autocomplete="off" placeholder="请输入验证码"></el-input>
-                    <span class="yzm" :disabled='disabled' @click="getVerificationCode('phone',2)">{{yzmtext}}</span>
+                    <span class="yzm" :disabled='disabled' @click="getVerificationCode(xinyzm.loginType==1?'phone':'email',2)">{{yzmtext}}</span>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -153,21 +153,19 @@
 <script>
 import userheader from "./header.vue";
 var interval = null;
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 export default {
     components: {
         userheader
     },
     data() {
         var validateyzm1 = (rule, value, callback) => {
-            console.log(this.sucyzm)
             if (value === '') {
                 callback(new Error('请输入验证码'));
             } 
-            
-            if(value==this.sucyzm && value.length>0){
-                callback();
-            }else{
-                callback(new Error('验证码错误'));
+            if(value.trim().length==0){
+               callback(new Error('验证码不能为空'));
             }
             callback();
         };
@@ -213,7 +211,7 @@ export default {
                     {validator: validateyzm1}
                 ],
                 loginName:[
-                    {validator:vloginName,trigger: 'blur'}
+                    {validator:vloginName}
                 ]
             },
             sucyzm:'',
@@ -222,8 +220,9 @@ export default {
     },
     created() {
         this.creatrequest()
-        let localdata=JSON.parse(localStorage.getItem('userinfo'))
-	    this.loginState=localdata.loginType
+        // let localdata=JSON.parse(localStorage.getItem('userinfo'))
+        let localdata=this.$getlocalStorage('userinfo')
+        this.loginState=localdata.loginType
     },
     mounted() {},
     computed: {},
@@ -261,25 +260,53 @@ export default {
                     if(!reg.test(this.xinyzm.loginName)){ 
                         return false  
                     }
-                }               
-            }
-            if(e=='phone'){
-                data={
-                    loginName:this.userdata.mobile,
-                    loginType:1
+                } 
+                if(e=='phone'){
+                    data={
+                        loginName:this.xinyzm.loginName,
+                        loginType:"1"
+                    }
+                }else{
+                    data={
+                        loginName:this.xinyzm.loginName,
+                        loginType:"2"
+                    }
                 }
+
             }else{
-                data={
-                    loginName:this.userdata.email,
-                    loginType:2
+                if(e=='phone'){
+                    data={
+                        loginName:this.userdata.mobile,
+                        loginType:"1"
+                    }
+                }else{
+                    data={
+                        loginName:this.userdata.email,
+                        loginType:"2"
+                    }
                 }
             }
+            
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":data.loginName,
+                "loginType":data.loginType,
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":data.loginName,
+                    "loginType":data.loginType,
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
             this.$request({
                 method:'post',
-                data:data,
+                data:json,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },
@@ -287,10 +314,10 @@ export default {
             }).then((res) => {
                 console.log(res);
                 if(res.data.code==-1){
-                    alert('请求失败')
+                    that.$layer.msg('请求失败',{shade: true,time: 3})
                     return false
                 }
-                this.sucyzm=res.data.data.code;
+                // this.sucyzm=res.data.data.code;
             }).catch((err) => {
                 console.log(err);
             })
@@ -331,6 +358,10 @@ export default {
         huan(e,type){
             this.dialogphonejiu=true;
             this.type=type;
+            clearInterval(interval)
+            this.currentTime=61;
+            this.disabled=false;
+            this.yzmtext='获取验证码';
             if(e=='phone'){
                 this.titlejiu='验证身份';
                 this.titlexin='绑定新手机号';
@@ -344,6 +375,11 @@ export default {
         bang(e,type){
             this.dialogphonexin=true;
             this.type=type;
+            clearInterval(interval)
+            this.currentTime=61;
+            this.disabled=false;
+            this.yzmtext='获取验证码';
+            
             if(e=='phone'){
                 this.titlexin='绑定手机号';
                 this.xinyzm.loginType=1;
@@ -352,17 +388,48 @@ export default {
                 this.xinyzm.loginType=2;
             }
         },
-        subjiuyzm(jiuyzm){
+        subjiuyzm(jiuyzm){ 
+            let that=this;
            this.$refs[jiuyzm].validate((valid) => {
                 if (valid) {
-                    this.yzmtext="获取验证码";
-                    this.disabled=false;
-                    this.currentTime=61;
-                    this.dialogphonejiu=false;
-                    this.dialogphonexin=true;
-                    this.sucyzm='';
-                    clearInterval(interval);
-                    this.$refs[jiuyzm].resetFields();
+                    var date = new Date();
+                    var timestamp = date.getTime();
+                    var res = {
+                        "timestamp": timestamp,
+                        "loginName":this.xinyzm.loginType==1?this.userdata.mobile:this.userdata.email,
+                        "verifyCode":this.jiuyzm.yzm1
+                    }
+                    var signature=getSign(res);
+                    var json=JSON.stringify({
+                            "timestamp": timestamp,
+                            "loginName":this.xinyzm.loginType==1?this.userdata.mobile:this.userdata.email,
+                            "verifyCode":this.jiuyzm.yzm1,
+                            "signature":signature.toUpperCase(),
+                            "timestamp":timestamp.toString()
+                        });
+                    that.$request({
+                        method:'post',
+                        headers:{
+                            'content-type': "application/json;charset=UTF-8"
+                        },
+                        data:json,
+                        url:'/register/getVerifyCode',
+                    }).then((res) => {
+                        if(res.data.code==0){
+                            this.yzmtext="获取验证码";
+                            this.disabled=false;
+                            this.currentTime=61;
+                            this.dialogphonejiu=false;
+                            this.dialogphonexin=true;
+                            clearInterval(interval);
+                            this.$refs[jiuyzm].resetFields();
+                        }else{
+                            this.sucyzm=false
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                    
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -386,7 +453,8 @@ export default {
                         },
                         data:{
                             loginType:that.xinyzm.loginType,
-                            loginName:that.xinyzm.loginName
+                            loginName:that.xinyzm.loginName,
+                            verifyCode:that.xinyzm.yzm1
                         },
                         url:urlrequest,
                     }).then((res) => {
@@ -394,6 +462,11 @@ export default {
                         if(res.data.code==0){
                             that.creatrequest();
                             that.dialogphonexin=false;
+                            console.log([
+                                that.type,
+                                that.loginState,
+                                that.xinyzm.loginType,
+                            ])
                             if(that.type=='h' && that.loginState==1 &&that.xinyzm.loginType==1){
                                 that.$layer.msg('手机号更换成功,请重新登录',{shade: true,time: 3})
                                 that.logout();
@@ -411,7 +484,7 @@ export default {
                             } 
                             this.$refs[xinyzm].resetFields();    
                         }else if(res.data.code==-1){
-                            alert(res.data.msg)
+                            that.$layer.msg(res.data.msg,{shade: true,time: 3})  
                         }else{
                             alert('加载失败，请重试')
                         }

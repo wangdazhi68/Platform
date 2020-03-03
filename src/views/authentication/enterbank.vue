@@ -163,6 +163,8 @@
 <script>
 import Rzheader from "./header.vue";
 import Upload from '@/components/upload.vue'
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 var interval = null;
 export default {
     components: {
@@ -208,20 +210,28 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.agentMobile,
+                "loginType":"1",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.agentMobile,
+                    "loginType":"1",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.agentMobile,
-                    loginType:1
-                },
-                headers:{
-                    'content-type': "application/json;charset=UTF-8"
-                },
+                data:json,
                 url:'/register/sendValidateCode',
             }).then((res) => {
                 console.log(res);
                 if(res.data.code==-1){
-                    alert('请求失败')
+                    that.$layer.msg(res.data.msg,{shade: true,time: 3})
                     return false
                 }
                 this.sucyzm=res.data.data.code;
@@ -310,14 +320,14 @@ export default {
                 this.brancherror=null
             }
 
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
-                this.yzmerror=null;    
-            }else{
-                this.yzmerror='验证码错误'
-                document.body.scrollTop= 800;
-	    	    document.documentElement.scrollTop = 800; 
-                return false
-            }
+            // if(this.yzm==this.sucyzm && this.yzm.length>0){
+            //     this.yzmerror=null;    
+            // }else{
+            //     this.yzmerror='验证码错误'
+            //     document.body.scrollTop= 800;
+	    	//     document.documentElement.scrollTop = 800; 
+            //     return false
+            // }
 
             if(JSON.stringify(this.imgs)=='{}'){
                 alert('请上传企业营业执照照片')

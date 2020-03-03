@@ -3,11 +3,11 @@
         <Rzheader></Rzheader>
         <div class="content">
             <div class="btns">
-                <span class="goindex">
+                <span class="goindex" @click='$router.replace({ name: "rzindex" })'>
                     <i></i>
                     返回首页
                 </span>
-                <span class="goback">返回上一级</span>
+                <span class="goback" @click="$router.back(-1)">返回上一级</span>
             </div>
             <div class="cnt">
                 <div class="bread">
@@ -86,7 +86,7 @@
                         <img src="../../assets/images/checksuccess.png" alt="">
                     </dt>
                     <dd>
-                        您的银行卡认证已实名认证通过。
+                        您的手机号认证已实名认证通过。
                     </dd>
                 </dl>
                 <div class="sure">
@@ -99,6 +99,8 @@
 <script>
 import Rzheader from "./header.vue";
 import qs from "qs";
+import {getSign} from '@/assets/js/sign';
+import { hexMD5 } from '@/assets/js/md5';
 var interval = null;
 export default {
     components: {
@@ -133,12 +135,24 @@ export default {
             this.getCode();
             var that = this
             that.disabled=true;
+            var date = new Date();
+            var timestamp = date.getTime();
+            var res = {
+                "timestamp": timestamp,
+                "loginName":this.mobile,
+                "loginType":"1",
+            }
+            var signature=getSign(res);
+            var json=JSON.stringify({
+                    "loginName":this.mobile,
+                    "loginType":"1",
+                    "signature":signature.toUpperCase(),
+                    "timestamp":timestamp.toString()
+                });
+
             this.$request({
                 method:'post',
-                data:{
-                    loginName:this.mobile,
-                    loginType:1
-                },
+                data:json,
                 headers:{
                     'content-type': "application/json;charset=UTF-8"
                 },
@@ -185,14 +199,14 @@ export default {
             }else{
                 this.iderror=null;
             }
-            if(this.yzm==this.sucyzm && this.yzm.length>0){
-                this.yzmerror=null;    
-            }else{
-                this.yzmerror='验证码错误'
-                document.body.scrollTop= 200;
-	    	    document.documentElement.scrollTop = 200; 
-                return false
-            }
+            // if(this.yzm==this.sucyzm && this.yzm.length>0){
+            //     this.yzmerror=null;    
+            // }else{
+            //     this.yzmerror='验证码错误'
+            //     document.body.scrollTop= 200;
+	    	//     document.documentElement.scrollTop = 200; 
+            //     return false
+            // }
             let loading=this.$layer.loading({shade:true});
             let that=this;
             let data = qs.stringify({

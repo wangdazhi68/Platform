@@ -263,12 +263,18 @@ export default new Router({
             children: [{
                     path: 'regPhone',
                     name: 'regPhone',
+                    meta: {
+                        title: "手机号注册",
+                    },
                     component: () =>
                         import ('./views/login/regPhone.vue')
                 },
                 {
                     path: 'regEmail',
                     name: 'regEmail',
+                    meta: {
+                        title: "邮箱注册",
+                    },
                     component: () =>
                         import ('./views/login/regEmail.vue')
                 },
