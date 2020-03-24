@@ -173,7 +173,7 @@ export default {
     },
     data() {
         return {
-            formData: new FormData(),
+            formData: {},
             imgs:{},
             entName:'',
             uscc:'',
@@ -234,7 +234,7 @@ export default {
                     that.$layer.msg(res.data.msg,{shade: true,time: 3})
                     return false
                 }
-                this.sucyzm=res.data.data.code;
+                //this.sucyzm=res.data.data.code;
             }).catch((err) => {
                 console.log(err);
             })
@@ -279,6 +279,7 @@ export default {
             }
         },
         submit() {
+            this.formData = new FormData();
             if(this.entName.match(/^\s*$/)){
                 this.nameerror='请填写企业名称'
                 document.body.scrollTop= 200;
@@ -305,11 +306,16 @@ export default {
             }
             
 
-            if(!this.luhnCheck(this.bankNo) || this.bankNo.match(/^\s*$/)){
+            // if(!this.luhnCheck(this.bankNo) || this.bankNo.match(/^\s*$/)){
+            //     this.banknoerror='银行卡号格式有误'
+            //     document.body.scrollTop= 650;
+	    	//     document.documentElement.scrollTop = 650;
+            //     return false;
+            // }else{
+            //     this.banknoerror=null
+            // }
+            if(!( /^\+?[0-9][0-9]*$/.test(this.bankNo))){
                 this.banknoerror='银行卡号格式有误'
-                document.body.scrollTop= 650;
-	    	    document.documentElement.scrollTop = 650;
-                return false;
             }else{
                 this.banknoerror=null
             }
@@ -320,14 +326,14 @@ export default {
                 this.brancherror=null
             }
 
-            // if(this.yzm==this.sucyzm && this.yzm.length>0){
-            //     this.yzmerror=null;    
-            // }else{
-            //     this.yzmerror='验证码错误'
-            //     document.body.scrollTop= 800;
-	    	//     document.documentElement.scrollTop = 800; 
-            //     return false
-            // }
+            if(this.yzm.trim().length>0){
+                this.yzmerror=null;    
+            }else{
+                this.yzmerror='请输入验证码'
+                document.body.scrollTop= 800;
+	    	    document.documentElement.scrollTop = 800; 
+                return false
+            }
 
             if(JSON.stringify(this.imgs)=='{}'){
                 alert('请上传企业营业执照照片')
@@ -339,7 +345,7 @@ export default {
             this.formData.append('bankNo', this.bankNo);
             this.formData.append('branch', this.branch);
             this.formData.append('agentMobile', this.agentMobile);
-
+            this.formData.append('verifyCode', this.yzm);
             this.formData.append('fileName', this.imgs[1]);
 
             let loading=this.$layer.loading({shade:true});
@@ -357,10 +363,11 @@ export default {
                 if(res.data.code==0){
                     that.$router.push({name:"entercheck"})
                 }else{
-                    that.$layer.msg('网络故障，请重新提交',{shade: true,time: 3})
+                    that.$layer.msg(res.data.msg,{shade: true,time: 3})
                 }
             }).catch((err) => {
                 console.log(err);
+                that.$layer.close(loading);
             })
         },
         // 银行卡验证

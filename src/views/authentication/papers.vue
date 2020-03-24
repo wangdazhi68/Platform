@@ -253,10 +253,11 @@ export default {
             }).then((res) => {
                 console.log(res);
                 if(res.data.code==-1){
-                    alert('请求验证码失败')
+                    //alert('请求验证码失败')
+                    that.$layer.msg(请求验证码失败,{shade: true,time: 3})
                     return false
                 }
-                this.sucyzm=res.data.data.code;
+                //this.sucyzm=res.data.data.code;
             }).catch((err) => {
                 console.log(err);
             })
@@ -304,6 +305,7 @@ export default {
             //console.log(this.num);
         },
         submit() {
+            this.formData = new FormData();
             if(!(/^[\u4e00-\u9fa5]+(·[\u4e00-\u9fa5]+)*$/).test(this.realName)){
                 this.nameerror='请输入正确格式的姓名'
                 document.body.scrollTop= 100;
@@ -323,14 +325,15 @@ export default {
 
 
 
-            // if(this.yzm==this.sucyzm && this.yzm.length>0){
-            //     this.yzmerror=null;    
-            // }else{
-            //     this.yzmerror='验证码错误'
-            //     document.body.scrollTop= 200;
-	    	//     document.documentElement.scrollTop = 200; 
-            //     return false
-            // }
+            if(this.yzm.trim().length>0){
+                this.yzmerror=null;    
+            }else{
+                this.yzmerror='请输入验证码'
+                document.body.scrollTop= 200;
+	    	    document.documentElement.scrollTop = 200; 
+                return false
+            }
+
 
             if(!this.num[0]){
                 alert('请上传证件照正面照片')
@@ -348,7 +351,7 @@ export default {
             this.formData.append('identityId', this.identityId);
             this.formData.append('mobile', this.mobile);
             this.formData.append('identityType', this.type);
-
+            this.formData.append('verifyCode', this.yzm);
             this.formData.append('fileName', this.imgs[1]);
             this.formData.append('fileName', this.imgs[2]);
             this.formData.append('fileName', this.imgs[3]);
@@ -372,6 +375,7 @@ export default {
                 }
             }).catch((err) => {
                 console.log(err);
+                that.$layer.close(loading);
             })
         },
         subdetail(loading){

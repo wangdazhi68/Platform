@@ -69,6 +69,8 @@ export default {
                 if(res.data.code==0){
                     if(res.data.data.approveStatus=="1"){
                         that.$layer.msg('您已认证，不能重复认证',{shade: true,time: 3})
+                    }else if(res.data.data.approveStatus=="0" && res.data.data.appStatus=="0"){
+                        that.$layer.msg('您的认证正在审核中，请耐心等待',{shade: true,time: 3})
                     }else{
                         this.$router.push({name:"personal"})
                     }
@@ -91,7 +93,11 @@ export default {
                 console.log(res);
                 if(res.data.code==0){
                     if(res.data.data.appStatus==1){
-                        that.$layer.msg('您已提交个人认证，一个账号只能认证一种类型',{shade: true,time: 3})
+                        that.$layer.msg('您已通过个人认证，一个账号只能认证一种类型',{shade: true,time: 3})
+                        return true
+                    }
+                    if(res.data.data.appStatus=='0' && res.data.data.approveStatus=='0'){
+                        that.$layer.msg('您的认证正在审核中，请耐心等待',{shade: true,time: 3})
                         return true
                     }
                     if(res.data.data.approveStatus=="1"){
